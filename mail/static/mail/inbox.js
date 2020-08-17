@@ -8,6 +8,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // By default, load the inbox
   load_mailbox('inbox');
+
+  // Listen for submit event to send email to server
+  document.querySelector('#compose-form').addEventListener('submit', event => {
+    console.log('Send email button clicked!');
+    event.preventDefault();
+  
+    // Send POST request to server
+    fetch('/emails', {
+      method: 'POST',
+      body: JSON.stringify({
+        recipients: document.querySelector('#compose-recipients').value,
+        subject: document.querySelector('#compose-subject').value,
+        body: document.querySelector('#compose-body').value
+      })
+    })
+    .then(response => response.json())
+    .then(result => {
+      console.log(result);
+
+      // Direct user to the sent mailbox after sending email
+      load_mailbox('sent');
+    });
+  });
 });
 
 function compose_email() {
