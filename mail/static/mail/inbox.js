@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Listen for submit event to send email to server
   document.querySelector('#compose-form').addEventListener('submit', event => {
-    console.log('Send email button clicked!');
     event.preventDefault();
   
     // Send POST request to server
@@ -25,8 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(response => response.json())
     .then(result => {
-      console.log(result);
-
       // Direct user to the sent mailbox after sending email
       load_mailbox('sent');
     });
@@ -53,4 +50,24 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // Fetch emails for the requested mailbox
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+    // Display emails for each mailbox
+    emails.forEach(element => {
+      let emailElement = document.createElement('div');
+      emailElement.classList.add('email');
+
+      if (element.read === true) {
+        emailElement.classList.add('email-read');
+      } else {
+        emailElement.classList.add('email-unread');
+      }
+
+      emailElement.innerHTML = `<p class="sender">${element.sender}</p><span class="timestamp">${element.timestamp}</span><p class="subject">${element.subject}</p>`;
+      document.querySelector('#emails-view').appendChild(emailElement);
+    });
+  });
 }

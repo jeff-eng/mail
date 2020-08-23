@@ -1,3 +1,63 @@
 textarea {
     min-height: 400px;
 }
+
+.email {
+    border: 2px solid gray;
+    border-radius: 5px;
+    /* offset-x | offset-y | blur-radius | color */
+    box-shadow: 2px 2px 3px #333;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    min-width: 328px;
+}
+
+.timestamp {
+    position: static;
+    margin-left: 10px;
+    top: 5px;
+  }
+    
+.sender {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.subject {
+    color: gray;
+    margin-left: 10px;
+}
+
+.email-read {
+    background-color: gainsboro;
+}
+
+.email-unread {
+    background-color: white;
+}
+
+/* Breakpoint@500px to handle element positioning */
+@media (min-width: 500px) {
+    .email {
+        position: relative;
+        padding-left: 5px;
+  }
+
+    .timestamp {
+        position: absolute;
+        top: 5px;
+        right: 20px;
+  }
+
+    .sender {
+        font-size: 1.25em;
+    }
+}
+
+/* Special sizing for really small devices */
+@media (max-width: 328px) {
+    .sender {
+        font-size: 1em;
+    }
+}
