@@ -34,6 +34,7 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#displayemail-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -43,11 +44,10 @@ function compose_email() {
 }
 
 function load_mailbox(mailbox) {
-  
-  // Show the mailbox and hide other views
+    // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#displayemail-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
-
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
@@ -59,15 +59,62 @@ function load_mailbox(mailbox) {
     emails.forEach(element => {
       let emailElement = document.createElement('div');
       emailElement.classList.add('email');
+      emailElement.setAttribute('data-id', `${element.id}`);
 
+      // Add class for each email to visuall distinguish read vs. unread
       if (element.read === true) {
         emailElement.classList.add('email-read');
       } else {
         emailElement.classList.add('email-unread');
       }
 
+      // Add event listener
+      emailElement.addEventListener('click', event => {
+        document.querySelector('#displayemail-view').style.display = 'block';
+        let clickedElement = event.target;
+        let email_id;        
+
+        if (clickedElement.parentElement.dataset.id != null) {
+          console.log('User clicked on something other than the DIV');
+          email_id = clickedElement.parentElement.dataset.id;
+        } else {
+          console.log('User clicked on the DIV');
+          email_id = clickedElement.dataset.id;
+        }
+        // Hide the email list and compose views
+        document.querySelector('#emails-view').style.display = 'none';
+        document.querySelector('#compose-view').style.display = 'none';
+
+        // Fetch the email contents using the ID, then display the contents
+        fetch(`/emails/${email_id}`)
+        .then(response => response.json())
+        .then(email => {
+          console.log(email);
+          displayEmail(email);
+        });
+      });
+
       emailElement.innerHTML = `<p class="sender">${element.sender}</p><span class="timestamp">${element.timestamp}</span><p class="subject">${element.subject}</p>`;
       document.querySelector('#emails-view').appendChild(emailElement);
     });
   });
+}
+
+function displayEmail(email) {
+  // Update the DOM with the email contents
+  document.querySelector('#email-sender').innerHTML = email.sender;
+  document.querySelector('#email-subject').innerHTML = email.subject;
+  document.querySelector('#email-timestamp').innerHTML = email.timestamp;
+  document.querySelector('#email-body').innerHTML = email.body;
+  console.log(email.recipients);
+  document.querySelector('#email-recipients').innerHTML = email.recipients;
+  // Update that email has been read only if it's currently showing as unread
+  if (email.read === false) {
+    fetch(`/emails/${email.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        read: true
+      })
+    })
+  }
 }
