@@ -75,10 +75,8 @@ function load_mailbox(mailbox) {
         let email_id;        
 
         if (clickedElement.parentElement.dataset.id != null) {
-          console.log('User clicked on something other than the DIV');
           email_id = clickedElement.parentElement.dataset.id;
         } else {
-          console.log('User clicked on the DIV');
           email_id = clickedElement.dataset.id;
         }
         // Hide the email list and compose views
@@ -102,12 +100,12 @@ function load_mailbox(mailbox) {
 
 function displayEmail(email) {
   // Update the DOM with the email contents
-  document.querySelector('#email-sender').innerHTML = email.sender;
   document.querySelector('#email-subject').innerHTML = email.subject;
   document.querySelector('#email-timestamp').innerHTML = email.timestamp;
+  document.querySelector('#email-sender').innerHTML += email.sender;
   document.querySelector('#email-body').innerHTML = email.body;
-  console.log(email.recipients);
-  document.querySelector('#email-recipients').innerHTML = email.recipients;
+  document.querySelector('#email-recipients').innerHTML += email.recipients.join(', ');
+  
   // Update that email has been read only if it's currently showing as unread
   if (email.read === false) {
     fetch(`/emails/${email.id}`, {
