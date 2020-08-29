@@ -102,9 +102,9 @@ function displayEmail(email) {
   // Update the DOM with the email contents
   document.querySelector('#email-subject').innerHTML = email.subject;
   document.querySelector('#email-timestamp').innerHTML = email.timestamp;
-  document.querySelector('#email-sender').innerHTML += email.sender;
+  document.querySelector('#email-sender').innerHTML = email.sender;
   document.querySelector('#email-body').innerHTML = email.body;
-  document.querySelector('#email-recipients').innerHTML += email.recipients.join(', ');
+  document.querySelector('#email-recipients').innerHTML = email.recipients.join(', ');
   
   // Update that email has been read only if it's currently showing as unread
   if (email.read === false) {
