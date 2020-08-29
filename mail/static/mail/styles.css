@@ -9,7 +9,6 @@ textarea {
     box-shadow: 2px 2px 3px #333;
     margin-top: 5px;
     margin-bottom: 5px;
-    min-width: 328px;
 }
 
 .timestamp {
@@ -37,11 +36,32 @@ textarea {
     background-color: white;
 }
 
+.email-heading {
+    font-weight: bold;
+}
+
+#email-subject {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+#displayemail-view {
+    position: relative;
+}
+
+#email-timestamp {
+    position: absolute;
+    top: 0px;
+    right:  20px;
+}
+
 /* Breakpoint@500px to handle element positioning */
 @media (min-width: 500px) {
     .email {
         position: relative;
         padding-left: 5px;
+        min-width: 470px;
+
   }
 
     .timestamp {
@@ -55,9 +75,46 @@ textarea {
     }
 }
 
-/* Special sizing for really small devices */
-@media (max-width: 328px) {
+/* Fixes email box sizing issue at this particular breakpoint */
+@media (min-width: 376px) and (max-width: 499px) {
+    .email {
+        max-width: 500px;
+    }
+
+    #email-timestamp {
+        position: static;
+    }
+}
+
+@media (min-width: 329px) and (max-width: 410px) {
+    h2 {
+        font-size: 1.6rem;
+    }
+
     .sender {
-        font-size: 1em;
+        font-size: 1.4rem;
+    }
+
+    .email {
+        min-width: 290px;
+    }
+}
+
+/* Special sizing for really small devices */
+@media (min-width: 200px) and (max-width: 328px) {
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    .email {
+        min-width: 225px;
+    }
+
+    .sender {
+        font-size: 0.9rem;
+    }
+
+    #email-timestamp {
+        position: static;
     }
 }
