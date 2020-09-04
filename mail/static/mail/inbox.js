@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
@@ -23,9 +22,24 @@ document.addEventListener('DOMContentLoaded', function() {
       })
     })
     .then(response => response.json())
-    .then(result => {
+    .then(() => {
       // Direct user to the sent mailbox after sending email
       load_mailbox('sent');
+    });
+  });
+
+  // Handle when user clicks on Archive/Unarchive button
+  document.querySelector('#archive-btn').addEventListener('click', () => {
+    // Update server with email's archive status
+    fetch(`/emails/${sessionStorage.getItem('email_id')}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        // Takes the current archived status, invert it, and update server accordingly
+        archived: (sessionStorage.getItem('archived') !== 'true')
+      })
+    })
+    .then(() => {
+      load_mailbox('inbox');
     });
   });
 });
@@ -33,9 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function compose_email() {
 
   // Show compose view and hide other views
+  document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#displayemail-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -44,7 +58,7 @@ function compose_email() {
 }
 
 function load_mailbox(mailbox) {
-    // Show the mailbox and hide other views
+  // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#displayemail-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
@@ -68,37 +82,38 @@ function load_mailbox(mailbox) {
         emailElement.classList.add('email-unread');
       }
 
-      // Add event listener
+      // Listen for user clicking on email in inbox view
       emailElement.addEventListener('click', event => {
-        document.querySelector('#displayemail-view').style.display = 'block';
         let clickedElement = event.target;
         let email_id;        
-
+        
+        // Records the email ID on the clicked element (wherever it is clicked on)
         if (clickedElement.parentElement.dataset.id != null) {
           email_id = clickedElement.parentElement.dataset.id;
         } else {
           email_id = clickedElement.dataset.id;
         }
-        // Hide the email list and compose views
+        // Show the display email view; hide the email list and compose views
+        document.querySelector('#displayemail-view').style.display = 'block';
         document.querySelector('#emails-view').style.display = 'none';
         document.querySelector('#compose-view').style.display = 'none';
 
-        // Fetch the email contents using the ID, then display the contents
+        // Fetch the email contents using the ID, then display contents
         fetch(`/emails/${email_id}`)
         .then(response => response.json())
         .then(email => {
-          console.log(email);
-          displayEmail(email);
+          displayEmail(email, mailbox);
         });
       });
 
+      // Add email to list of emails in inbox
       emailElement.innerHTML = `<p class="sender">${element.sender}</p><span class="timestamp">${element.timestamp}</span><p class="subject">${element.subject}</p>`;
       document.querySelector('#emails-view').appendChild(emailElement);
     });
   });
 }
 
-function displayEmail(email) {
+function displayEmail(email, mailbox) {
   // Update the DOM with the email contents
   document.querySelector('#email-subject').innerHTML = email.subject;
   document.querySelector('#email-timestamp').innerHTML = email.timestamp;
@@ -106,7 +121,12 @@ function displayEmail(email) {
   document.querySelector('#email-body').innerHTML = email.body;
   document.querySelector('#email-recipients').innerHTML = email.recipients.join(', ');
   
-  // Update that email has been read only if it's currently showing as unread
+  // Save the email ID and whether email is archived in session storage
+  sessionStorage.setItem('email_id', email.id);
+  sessionStorage.setItem('archived', email.archived);
+
+  toggleArchive(mailbox, email.archived);
+
   if (email.read === false) {
     fetch(`/emails/${email.id}`, {
       method: 'PUT',
@@ -115,4 +135,15 @@ function displayEmail(email) {
       })
     })
   }
+}
+
+// Handles display of archive button and behavior based on email box and email archive value
+function toggleArchive(mailbox, archivedStatus) {
+  if (mailbox === 'sent') {
+    document.querySelector('#archive-btn').style.display = 'none';
+    return;
+  }
+
+  let archiveButtonText = archivedStatus ? 'Unarchive' : 'Archive';
+  document.querySelector('#archive-btn').innerHTML = archiveButtonText;
 }

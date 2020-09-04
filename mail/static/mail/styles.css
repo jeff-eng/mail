@@ -73,6 +73,12 @@ textarea {
     .sender {
         font-size: 1.25em;
     }
+
+    #archive-btn {
+        position: absolute;
+        top: 80px;
+        right: 20px;
+    }
 }
 
 /* Fixes email box sizing issue at this particular breakpoint */
@@ -86,7 +92,7 @@ textarea {
     }
 }
 
-@media (min-width: 329px) and (max-width: 410px) {
+@media (min-width: 329px) and (max-width: 375px) {
     h2 {
         font-size: 1.6rem;
     }
@@ -97,6 +103,14 @@ textarea {
 
     .email {
         min-width: 290px;
+    }
+    
+    .timestamp {
+        position: static;
+    }
+
+    #email-timestamp {
+        position: static;
     }
 }
 
