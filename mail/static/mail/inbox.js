@@ -42,10 +42,36 @@ document.addEventListener('DOMContentLoaded', function() {
       load_mailbox('inbox');
     });
   });
+
+  document.querySelector('#reply-btn').addEventListener('click', () => {
+    let emailContents = {
+      timestamp: document.querySelector('#email-timestamp').textContent,
+      sender: document.querySelector('#email-sender').textContent,
+      subject: document.querySelector('#email-subject').textContent,
+      body: document.querySelector('#email-body').textContent
+    };
+    reply_email(emailContents);
+
+  });
 });
 
-function compose_email() {
+function reply_email(originalEmail) {
+  // Show compose view and hide the other views
+  document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#displayemail-view').style.display = 'none';
 
+  let subjectText = originalEmail.subject.startsWith('Re:') ? originalEmail.subject : `Re: ${originalEmail.subject}`;
+
+  // Pre-fill the email input fields
+  document.querySelector('h3').innerHTML = 'Email Reply';
+  document.querySelector('#compose-recipients').value = originalEmail.sender;
+  document.querySelector('#compose-subject').value = subjectText;
+  document.querySelector('#compose-body').innerHTML = `\n\nOn ${originalEmail.timestamp} ${originalEmail.sender} wrote: &#10;"${originalEmail.body}"`;
+  document.querySelector('#compose-body').focus();
+}
+
+function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#emails-view').style.display = 'none';
