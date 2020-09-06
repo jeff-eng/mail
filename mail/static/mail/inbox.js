@@ -67,7 +67,7 @@ function reply_email(originalEmail) {
   document.querySelector('h3').innerHTML = 'Email Reply';
   document.querySelector('#compose-recipients').value = originalEmail.sender;
   document.querySelector('#compose-subject').value = subjectText;
-  document.querySelector('#compose-body').innerHTML = `\n\nOn ${originalEmail.timestamp} ${originalEmail.sender} wrote: &#10;"${originalEmail.body}"`;
+  document.querySelector('#compose-body').innerHTML = `\n\n"On ${originalEmail.timestamp} ${originalEmail.sender} wrote: &#10;${originalEmail.body}"`;
   document.querySelector('#compose-body').focus();
 }
 
@@ -128,6 +128,7 @@ function load_mailbox(mailbox) {
         fetch(`/emails/${email_id}`)
         .then(response => response.json())
         .then(email => {
+          console.log(email);
           displayEmail(email, mailbox);
         });
       });
