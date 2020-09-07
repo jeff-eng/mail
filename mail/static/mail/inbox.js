@@ -128,7 +128,6 @@ function load_mailbox(mailbox) {
         fetch(`/emails/${email_id}`)
         .then(response => response.json())
         .then(email => {
-          console.log(email);
           displayEmail(email, mailbox);
         });
       });
